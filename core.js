@@ -4,11 +4,11 @@ const finite=n=>typeof n==='number'&&Number.isFinite(n)&&n>0;
 export function quality(q,now=Date.now()){
  const time=Date.parse(q.at);if(!finite(q.ask)||!finite(q.bid)||q.ask<q.bid)return 'Precio inválido';
  if(!Number.isFinite(time)||time>now+60000)return 'Fecha inválida';
- if(q.conflict)return 'Diferencia entre fuentes';if(q.stale||now-time>MAX_AGE)return 'Dato demorado';return null;
+ if(q.conflict)return 'Diferencia entre fuentes';if(now-time>86400000)return 'Dato vencido';if(q.stale||now-time>MAX_AGE)return 'Dato demorado';return null;
 }
 export function calculate(q,n,mode,unit){const rate=mode==='buy'?q.ask:q.bid;return unit==='usd'?n*rate:n/rate;}
 export function normalizeComparadolar(data){if(!Array.isArray(data))throw new Error('Respuesta no válida');return data.filter(q=>q&&['Oficial','MEP'].includes(q.usdType)&&typeof q.slug==='string').map(q=>({id:q.slug,name:String(q.prettyName||q.slug),ask:q.ask,bid:q.bid,at:q.lastSeenAt,stale:q.stale===true,market:q.usdType,condition:q.conditions?String(q.conditions):'',source:'Compará Dólar',url:q.url,knownFees:q.usdType==='Oficial'&&['uala','brubank-ultra'].includes(q.slug)}));}
-export const bankMap={bna:'banco-nacion',bapro:'banco-provincia',ciudad:'banco-ciudad',hipotecario:'banco-hipotecario',icbc:'icbc',supervielle:'banco-supervielle',pluscambio:'plus',prex:'prex',andina:'andina',comafi:'comafi',mariva:'mariva',plazacambio:'plazacambio',triacambio:'triacambio'};
+export const bankMap={brubank:'brubank',bbva:'bbva',galicia:'galicia',macro:'macro',patagonia:'patagonia',piano:'piano',santander:'santander',columbia:'columbia',bytelime:'bytelime',bna:'banco-nacion',bapro:'banco-provincia',ciudad:'banco-ciudad',hipotecario:'banco-hipotecario',icbc:'icbc',supervielle:'banco-supervielle',pluscambio:'plus',prex:'prex',andina:'andina',comafi:'comafi',mariva:'mariva',plazacambio:'plazacambio',triacambio:'triacambio'};
 // Retain delayed quotes for display. They must never displace a fresh quote.
 export function references(quotes,{market,selected,ultra,now=Date.now()}){
  return quotes.filter(q=>q.market===market&&selected(q.id)&&[null,'Dato demorado'].includes(quality(q,now))&&(!q.condition||(q.id==='brubank-ultra'&&ultra)));
@@ -18,7 +18,7 @@ export function bestReference(quotes,config){const all=references(quotes,config)
 // Source observations remain separate so a newer aggregator cannot erase provenance.
 export function normalizeBanks(data){
  if(!data||typeof data!=='object'||Array.isArray(data))throw new Error('Respuesta no válida');
- return Object.entries(bankMap).filter(([key])=>data[key]).map(([key,id])=>{const b=data[key],stamp=Number(b.time)*1000;return{id,name:({bna:'Banco Nación',bapro:'Banco Provincia',ciudad:'Banco Ciudad',hipotecario:'Banco Hipotecario',supervielle:'Banco Supervielle',pluscambio:'Plus',prex:'Prex',andina:'Andina',comafi:'Comafi',mariva:'Mariva',plazacambio:'Plaza Cambio',triacambio:'Tria Cambio'})[key]||key.toUpperCase(),ask:b.totalAsk,bid:b.totalBid,at:Number.isFinite(stamp)&&Math.abs(stamp)<8640000000000000?new Date(stamp).toISOString():'',market:'Oficial',condition:'',source:'CriptoYa',knownFees:false};});
+ return Object.entries(bankMap).filter(([key])=>data[key]).map(([key,id])=>{const b=data[key],stamp=Number(b.time)*1000;return{id,name:({brubank:'Brubank común',bbva:'BBVA',galicia:'Galicia',macro:'Macro',patagonia:'Patagonia',piano:'Piano',santander:'Santander',columbia:'Columbia',bytelime:'Bytelime',bna:'Banco Nación',bapro:'Banco Provincia',ciudad:'Banco Ciudad',hipotecario:'Banco Hipotecario',supervielle:'Banco Supervielle',pluscambio:'Plus',prex:'Prex',andina:'Andina',comafi:'Comafi',mariva:'Mariva',plazacambio:'Plaza Cambio',triacambio:'Tria Cambio'})[key]||key.toUpperCase(),ask:b.totalAsk,bid:b.totalBid,at:Number.isFinite(stamp)&&Math.abs(stamp)<8640000000000000?new Date(stamp).toISOString():'',market:'Oficial',condition:key==='brubank'?'Plan no informado por la fuente':'',source:'CriptoYa',knownFees:false};});
 }
 export function validObservation(q,now=Date.now()){
  if(!q||!['Oficial','MEP'].includes(q.market)||typeof q.id!=='string'||!['Compará Dólar','CriptoYa'].includes(q.source))return false;
@@ -53,4 +53,22 @@ export function resolveFavorites(quotes,config){
  const available=references(quotes,{...config,selected:favoriteSelected});
  if(available.length)return{selected:favoriteSelected,fallback:false};
  return{selected:base,fallback:true};
+}
+// These are coverage targets, not a claim that every provider offers both modalities.
+export const coverageTargets=[['mercado-pago','Mercado Pago'],['brubank','Brubank común'],['brubank-ultra','Brubank Ultra'],['naranja-x','Naranja X'],['uala','Ualá'],['reba','Reba'],['cocos','Cocos MEP'],['cocos-bank','Cocos Bank'],['balanz','Balanz'],['plus','Plus'],['tiendadolar','Tienda Dólar'],['fiwind-mep','Fiwind MEP']];
+export function coverageGaps(quotes,config){
+ const targets=new Map([...quotes.map(q=>[q.id,q.name]),...coverageTargets]);
+ return [...targets].sort(([a],[b])=>{const priority=id=>coverageTargets.findIndex(row=>row[0]===id);return (priority(a)<0?999:priority(a))-(priority(b)<0?999:priority(b));}).flatMap(([id,name])=>{
+  const all=quotes.filter(q=>q.id===id),matching=all.filter(q=>q.market===config.market);
+  let reason;
+  if(!matching.length)reason=all.length?'Sin referencia para '+config.market+'; hay datos de otra modalidad.':'Sin cotización verificable en las fuentes conectadas.';
+  else if(!config.selected(id))reason='Fuera de tus apps habilitadas o del filtro de favoritos.';
+  else if(id==='brubank-ultra'&&!config.ultra)reason='Requiere confirmar el plan Ultra en Ajustes.';
+  else {const q=matching.sort((a,b)=>Date.parse(b.at)-Date.parse(a.at))[0],status=quality(q,config.now);if(status)reason=status+' · último dato '+q.at;else if(q.condition)reason='Condición: '+q.condition;}
+  return reason?[{id,name,reason}]:[];
+ });
+}
+export function normalizeMarketReference(data){
+ if(!data||data.moneda!=='USD'||data.casa!=='oficial'||!finite(data.compra)||!finite(data.venta)||data.venta<data.compra||!Number.isFinite(Date.parse(data.fechaActualizacion))||Date.parse(data.fechaActualizacion)>Date.now()+60000)throw new Error('Referencia general inválida');
+ return{bid:data.compra,ask:data.venta,at:data.fechaActualizacion};
 }

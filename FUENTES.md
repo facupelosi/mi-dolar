@@ -24,3 +24,22 @@ Se incorporó la hoja pública usada por https://www.brubank.com/dolar-oficial m
 Continuación de búsqueda Mercado Pago: se revisó su documentación oficial Developers/Reference y Cross Border, más la API gratuita Dolarazo. La documentación revisada no ofrece una cotización pública propia de compra/venta USD en billetera; Dolarazo documenta tipos generales, no entidades. La conversión Cross Border pertenece a cobros internacionales y no es evidencia de precio minorista USD. Sigue visible sin cotización verificable; no se reemplaza con MEP genérico ni P2P.
 
 Validación de esta ampliación: 29 pruebas automatizadas; carga real de la hoja, separación Oficial/MEP y exclusión de referencia sin plan/hora de la calculadora verificadas en UI.
+
+## Hacer rendir mis pesos — 29/10/2026
+
+Nueva pestaña Mi plata: monto en ARS, días (1/7/14/30), comparación por ganancia estimada aplicando mínimos y topes. Interés simple: min(saldo,tope) × TNA × días / 365. No capitaliza, descuenta impuestos ni cargos; mantiene saldo y tasa constantes como supuesto. No presenta estimaciones como ganancias garantizadas ni ajustadas por inflación.
+
+Fuente dinámica: https://api.argentinadatos.com/v1/finanzas/fci/otros/ultimo . Se verificó su uso para cuentas en el proyecto público ComparaTasas y se contrastaron tasas y condiciones de Naranja X/Ualá en sus sitios oficiales. Se normalizan sólo productos de cobertura conocida, tasas numéricas en proporción, tope positivo, fecha real no futura y cuentas sin plazo. Fechas de más de 3 días no se destacan. Cache validada, sin inventar tasas en fallos y sin retroceder a fechas anteriores.
+
+Cobertura inicial: Naranja X, Ualá base/Plus 1/Plus 2 y Fiwind opcional. No afirma cobertura total. Ualá especial requiere elección explícita de una tasa ya activa; la opción vuelve a base al recargar. Fiwind es FCI con bonificación (riesgo distinto de depósito bancario) y requiere inclusión explícita. Sobre su excedente del tramo bonificado hay rendimiento variable no estimado: la comparación parcial queda fuera de la mejor opción. Se respeta acreditación mínima diaria de un centavo para Fiwind. No se incluyen criptopesos, otros FCI, plazos fijos ni frascos en esta primera versión.
+
+Fuentes oficiales contrastadas:
+- https://www.naranjax.com/cuenta-remunerada : tope, activación, fórmula diaria y disponibilidad.
+- https://www.uala.com.ar/inversiones/cuenta-remunerada : mínimo, tope, tasas base/Plus, condiciones y variabilidad. El beneficio actual tiene condiciones mensuales: la proyección supone que se mantienen durante todo el plazo, no lo garantiza.
+- https://help.fiwind.io/es/articles/11723346-tus-primeros-pesos-rinden-mas : tramo bonificado y excedente variable.
+- https://help.fiwind.io/es/articles/11459227-hay-un-monto-minimo-y-maximo-para-empezar-a-generar-rendimientos : mínimo y acreditación diaria.
+- https://help.fiwind.io/es/articles/11420019-puedo-usar-mis-pesos-si-tengo-activados-los-rendimientos : disponibilidad y tipo FCI.
+
+Validación: 42 pruebas automáticas aprobadas. UI con datos reales: monto 500.000/30 días, monto superior a topes, Plus 2 explícito, FCI opcional, rechazo de separadores ambiguos, vuelta segura a base tras recarga, navegación a Dólar y Brubank, pantalla móvil sin desborde horizontal. Cambios sólo en frontend; sin cuentas conectadas ni movimientos de dinero.
+
+Reversión: restaurar el commit anterior f4ddaa9 y publicar de nuevo. Los datos y preferencias locales de pesos usan claves separadas de las cotizaciones USD.

@@ -20,6 +20,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -51,3 +53,23 @@ jobs:
       - uses: actions/deploy-pages@v4
         id: deployment
 
+      - name: Report source health
+        if: always()
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          path = pathlib.Path('data/official-fixed.json')
+          if not path.exists():
+              raise SystemExit('Official source result missing')
+          data = json.loads(path.read_text())
+          with open(__import__('os').environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write('## Official fixed-deposit verification\n')
+              summary.write('Checked: ' + data['generatedAt'] + '\n\n')
+              summary.write('Verified banks: ' + str(len(data['products'])) + '\n')
+              for product in data['products']:
+                  summary.write('- ' + product['name'] + ': effective since ' + product['effectiveFrom'] + '\n')
+          for error in data['errors']:
+              print('::warning::' + error['name'] + ': source verification failed; excluded from current comparison')
+          if not data['products']:
+              raise SystemExit('No official bank source verified. App published with unavailable state.')
+          PY

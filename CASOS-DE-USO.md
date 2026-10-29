@@ -54,3 +54,10 @@ La versión anterior es el commit 770121c. Un revert de los cambios de esta vers
 - Sin verificación del documento durante más de 24h, consulta fallida, URL ajena al banco, fecha futura, porcentajes en unidad incorrecta o tramos superpuestos: no se ofrece una tasa vigente.
 - Referencias del BCRA/ArgentinaDatos sin fecha original: desplegable separado, no compiten con los tarifarios oficiales.
 - Automatización preparada pero no activada: falta permiso workflow de GitHub. No prometer refresco automático del documento mientras no se configure. Actualizar en el cliente vuelve a leer la publicación, sin renovar la fecha original.
+
+
+## Versión 11 — Mi plata simple y actualización automática
+
+Tres entradas: monto, días y qué comparar. Las cuentas disponibles, los plazos fijos y las billeteras se ven por separado. La selección de plazo fijo implica esperar al vencimiento y no exige un segundo control contradictorio. A menos de 30 días no se calcula plazo fijo. Ganancia estimada y total primero; TNA desarrollada en castellano, topes, mínimos y condiciones en un desplegable. Los datos sin fecha van dentro de metodología, fuera del recorrido principal. Las cuentas sin consulta reciente o con tasa demorada no muestran una ganancia vigente. Dólar sigue primero.
+
+QA Chromium aislado: 320, 390 y 768 px sin overflow; cambio de cuentas a plazo fijo y regreso, bloqueo de 7 días, monto inválido sin resultados, sin errores JS. 64 pruebas de dominio pasan. No equivale a prueba física de Safari/iPhone. Actualización automática desde GitHub comprobada con documentos de los dos bancos y publicación nueva; no depende de esta computadora.

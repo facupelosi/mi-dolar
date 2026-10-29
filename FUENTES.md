@@ -63,3 +63,10 @@ Se descargan documentos oficiales con scripts/collect_official_pf.py (Python 3.1
 Actualización automática pendiente: GitHub rechazó la creación del workflow por faltar el scope workflow a la credencial facupelosi. La propuesta lista está en work/publish.yml local (no publicada). No se cambió la configuración de Pages. Por ahora el JSON se renueva al ejecutar el recolector y publicar. El botón Actualizar de la app descarga el último JSON publicado; no ejecuta el recolector en GitHub.
 
 Fuentes primarias: https://www.bna.com.ar/Home/InformacionAlUsuarioFinanciero y PDF enlazado; https://www.bancoprovincia.com.ar/content/docs/Plazos_fijos_tasas_vigentes.pdf . Son tarifarios públicos publicados por el banco, no una cotización autenticada para cada usuario. Hipotecario fue descartado: el documento encontrado indicaba vigencia antigua; no se usó una fecha de consulta o de términos para suplir una fecha de tasa.
+
+
+## Automatización habilitada — versión 11
+
+El 29/10/2026 se autorizó el scope workflow de facupelosi y se migró Pages de legacy a workflow. `.github/workflows/publish.yml` revisa documentos oficiales cada 6 horas (minuto 17 UTC), ante pushes y con ejecución manual. Guarda la verificación en un commit de datos y publica un artefacto que contiene sólo los archivos públicos. El commit de datos es evidencia nueva real de verificación y mantiene el repositorio actualizado. Se usa GITHUB_TOKEN temporal con contents:write, pages:write, id-token:write; no se publican credenciales. Las pruebas usan un fixture fijo, no esperan tasas constantes en los datos vivos.
+
+Primera ejecución correcta: https://github.com/facupelosi/mi-dolar/actions/runs/40940397434 . Se verificaron ambas fuentes desde el runner de GitHub y se publicó el JSON nuevo. Esto reemplaza el bloqueo de permisos descrito para v10; ya no está pendiente. La programación de GitHub puede demorarse; la app mantiene el corte de 24 horas y no inventa vigencia ante fallos. El botón Actualizar descarga el último resultado del servidor. Una revisión del documento no cambia su fecha original de vigencia.

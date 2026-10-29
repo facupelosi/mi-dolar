@@ -17,3 +17,10 @@ Cobertura dinámica visible dentro de Cotizaciones: ausencia de fuente, otra mod
 
 ## Validación
 23 pruebas automatizadas: ingestión, regresiones de fecha, conflictos, favoritos, planes, cotizaciones vencidas, motivos de cobertura y esquema de referencia general. Verificación de UI con datos reales y cambio Oficial/MEP. Sin operaciones de dinero.
+
+## Ampliación — referencia oficial de Brubank (29/10/2026)
+Se incorporó la hoja pública usada por https://www.brubank.com/dolar-oficial mediante Google Visualization sin claves ni cuenta. Recuadro propio en Cotizaciones / Oficial. Es una referencia publicada, no una oferta ejecutable confirmada. Se informa hora de lectura separada de la hora desconocida del precio, plan no confirmado y exclusión del ranking y la calculadora. Cache local validada; un fallo de red conserva la última lectura con aviso. El JSONP se analiza como texto con JSON.parse, nunca eval ni script remoto.
+
+Continuación de búsqueda Mercado Pago: se revisó su documentación oficial Developers/Reference y Cross Border, más la API gratuita Dolarazo. La documentación revisada no ofrece una cotización pública propia de compra/venta USD en billetera; Dolarazo documenta tipos generales, no entidades. La conversión Cross Border pertenece a cobros internacionales y no es evidencia de precio minorista USD. Sigue visible sin cotización verificable; no se reemplaza con MEP genérico ni P2P.
+
+Validación de esta ampliación: 29 pruebas automatizadas; carga real de la hoja, separación Oficial/MEP y exclusión de referencia sin plan/hora de la calculadora verificadas en UI.

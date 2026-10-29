@@ -1,0 +1,11 @@
+import{test}from'node:test';import assert from'node:assert/strict';
+import{parseBrubankReference,validBrubankCache}from'../brubank.js';
+import{ingest,bestReference}from'../core.js';
+const now=Date.parse('2026-10-29T18:00:00Z');
+const raw=(a='1547.00',b='1520.00')=>'/*O_o*/\ngoogle.visualization.Query.setResponse('+JSON.stringify({status:'ok',table:{rows:[{c:[{v:a},{v:b}]}]}})+');';
+test('Brubank conserva puntas y distingue recepción de hora del precio',()=>{const q=parseBrubankReference(raw(),now);assert.equal(q.ask,1547);assert.equal(q.bid,1520);assert.equal(q.observedAt,null);assert.equal(q.plan,null);assert.equal(q.receivedAt,new Date(now).toISOString());});
+test('No ejecuta código agregado al JSONP ni acepta HTML',()=>{for(const text of [raw()+'alert(1)','<html>Error</html>','google.visualization.Query.setResponse(alert(1));'])assert.throws(()=>parseBrubankReference(text,now));});
+test('Rechaza ceros, puntas invertidas, formatos ambiguos y objetos',()=>{for(const pair of [[0,1500],[1400,1500],['1.547,00','1520'],[{},1520],['Infinity',1520]])assert.throws(()=>parseBrubankReference(raw(...pair),now));});
+test('Rechaza esquema modificado, error del proveedor y respuestas enormes',()=>{for(const text of ['/*O_o*/ google.visualization.Query.setResponse({"status":"error"});',raw().replace('"rows"','"other"'),'x'.repeat(100001)])assert.throws(()=>parseBrubankReference(text,now));});
+test('Valida cache y no convierte una nueva lectura en hora original',()=>{const q=parseBrubankReference(raw(),now);assert.equal(validBrubankCache(q,now),true);for(const bad of [{...q,ask:'1547'},{...q,receivedAt:'invalid'},{...q,receivedAt:new Date(now+120000).toISOString()},{...q,plan:'Ultra'},{...q,observedAt:q.receivedAt}])assert.equal(validBrubankCache(bad,now),false);});
+test('Referencia sin plan ni fecha original nunca entra en ranking/calculadora',()=>{const q=parseBrubankReference(raw(),now);assert.equal(ingest([],[q],now).observations.length,0);assert.equal(bestReference([q],{market:'Oficial',selected:()=>true,ultra:true,now,mode:'buy'}),null);});

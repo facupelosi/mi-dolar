@@ -5,4 +5,3 @@ header h1{font-size:32px;margin:22px 0 16px}main{padding-top:calc(18px + env(saf
 .filter-note{font-size:12px;line-height:1.6;color:#dccc9d;background:#262219;border:1px solid #493f2a;border-radius:12px;padding:12px}.favorites-filter:has(input:disabled){color:#87919e}
 
 .coverage{margin-top:8px;border-top:1px solid var(--line)}.coverage summary{font-size:13px;min-height:44px;padding:15px 0}.coverage-row{padding:12px 0;border-bottom:1px solid var(--line)}.coverage-row strong{font-size:13px}.coverage-row p{margin:6px 0;overflow-wrap:anywhere}.coverage a{font-size:12px}
-

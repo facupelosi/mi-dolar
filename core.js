@@ -7,7 +7,7 @@ export function quality(q,now=Date.now()){
  if(q.conflict)return 'Diferencia entre fuentes';if(now-time>86400000)return 'Dato vencido';if(q.stale||now-time>MAX_AGE)return 'Dato demorado';return null;
 }
 export function calculate(q,n,mode,unit){const rate=mode==='buy'?q.ask:q.bid;return unit==='usd'?n*rate:n/rate;}
-export function normalizeComparadolar(data){if(!Array.isArray(data))throw new Error('Respuesta no válida');return data.filter(q=>q&&['Oficial','MEP'].includes(q.usdType)&&typeof q.slug==='string').map(q=>({id:q.slug,name:String(q.prettyName||q.slug),ask:q.ask,bid:q.bid,at:q.lastSeenAt,stale:q.stale===true,market:q.usdType,condition:q.conditions?String(q.conditions):'',source:'Compará Dólar',url:q.url,knownFees:q.usdType==='Oficial'&&['uala','brubank-ultra'].includes(q.slug)}));}
+export function normalizeComparadolar(data){if(!Array.isArray(data))throw new Error('Respuesta no válida');return data.filter(q=>q&&['Oficial','MEP'].includes(q.usdType)&&typeof q.slug==='string').map(q=>({id:q.slug,name:String(q.prettyName||q.slug),ask:q.ask,bid:q.bid,at:q.lastSeenAt,stale:q.stale===true,market:q.usdType,condition:q.conditions?String(q.conditions):'',source:'Compará Dólar',url:q.url,knownFees:false}));}
 export const bankMap={brubank:'brubank',bbva:'bbva',galicia:'galicia',macro:'macro',patagonia:'patagonia',piano:'piano',santander:'santander',columbia:'columbia',bytelime:'bytelime',bna:'banco-nacion',bapro:'banco-provincia',ciudad:'banco-ciudad',hipotecario:'banco-hipotecario',icbc:'icbc',supervielle:'banco-supervielle',pluscambio:'plus',prex:'prex',andina:'andina',comafi:'comafi',mariva:'mariva',plazacambio:'plazacambio',triacambio:'triacambio'};
 // Retain delayed quotes for display. They must never displace a fresh quote.
 export function references(quotes,{market,selected,ultra,now=Date.now()}){
@@ -41,7 +41,7 @@ export function reconcile(observations,now=Date.now()){
  const fresh=rows.filter(q=>!q.stale&&now-Date.parse(q.at)<=MAX_AGE);
  const conflict=fresh.some(a=>fresh.some(b=>Math.abs(a.ask-b.ask)/Math.max(a.ask,b.ask)>.003||Math.abs(a.bid-b.bid)/Math.max(a.bid,b.bid)>.003));
  const metadata=rows.find(q=>q.source==='Compará Dólar')||selected;
- return{...selected,name:metadata.name,url:metadata.url,knownFees:rows.some(q=>q.knownFees),conflict,provenance:rows.map(q=>({source:q.source,at:q.at,receivedAt:q.receivedAt,ask:q.ask,bid:q.bid})),crossChecked:fresh.length>1&&!conflict};
+ return{...selected,name:metadata.name,url:metadata.url,knownFees:false,conflict,provenance:rows.map(q=>({source:q.source,at:q.at,receivedAt:q.receivedAt,ask:q.ask,bid:q.bid})),crossChecked:fresh.length>1&&!conflict};
  });
 }
 export function recordHealth(history,sample){return [...history,sample].slice(-60);}

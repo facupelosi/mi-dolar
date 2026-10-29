@@ -14,14 +14,14 @@ export function normalizePesos(raw,now=Date.now()){
  for(const row of raw){const meta=Object.hasOwn(products,row?.fondo)?products[row.fondo]:null;if(!meta)continue;
   if(seen.has(meta.id)||typeof row.tna!=='number'||!Number.isFinite(row.tna)||row.tna<0||row.tna>1||typeof row.tope!=='number'||!Number.isFinite(row.tope)||row.tope<=0||!dateValid(row.fecha,now)||typeof row.condiciones!=='string'||row.condiciones.length>3000||row.plazoMinDias!==0||row.plazoMaxDias!==0){rejected++;continue;}
   if(meta.id.startsWith('uala-plus')&&!row.condiciones.trim()){rejected++;continue;}
-  seen.add(meta.id);rows.push({...meta,fondo:row.fondo,tna:row.tna,cap:row.tope,date:row.fecha,conditions:row.condiciones.trim(),note:meta.note||'Tasa variable. Mantener al menos $10.000 al cierre diario. El excedente del tope no genera intereses. Confirmá que la tasa elegida ya esté activa en tu app.'});
+  seen.add(meta.id);rows.push({...meta,fondo:row.fondo,tna:row.tna,cap:row.tope,date:row.fecha,conditions:row.condiciones.replace(/¡La más alta del mercado!/gi,'').trim(),note:meta.note||'Tasa variable. Mantener al menos $10.000 al cierre diario. El excedente del tope no genera intereses. Confirmá que la tasa elegida ya esté activa en tu app.'});
  }
  if(!rows.length)throw new Error('Sin tasas válidas de las opciones cubiertas');
  return{rows,rejected};
 }
 export function pesosFresh(row,now=Date.now()){return dateValid(row.date,now)&&Date.parse(argentinaDay(now))-Date.parse(row.date)<=3*86400000;}
 export function estimatePesos(row,amount,days){
- if(!Number.isFinite(amount)||amount<=0||amount>1e9||!Number.isInteger(days)||days<1||days>30)throw new Error('Monto o plazo inválido');
+ if(!Number.isFinite(amount)||amount<=0||amount>1e9||!Number.isInteger(days)||days<1||days>90)throw new Error('Monto o plazo inválido');
  const principal=amount>=row.minimum?Math.min(amount,row.cap):0;
  const daily=principal*row.tna/365;const gain=row.id==='fiwind'&&daily<0.01?0:daily*days;
  return{principal,gain,total:amount+gain,excess:Math.max(0,amount-row.cap),belowMinimum:amount<row.minimum,partial:row.id==='fiwind'&&amount>row.cap};

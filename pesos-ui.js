@@ -1,42 +1,51 @@
-import{PESOS_SOURCE,normalizePesos,comparePesos,mergePesos,bestPesos}from'./pesos.js';
-import{parseAmount}from'./core.js';
+import{PESOS_SOURCE,normalizePesos,comparePesos,bestPesos}from'./pesos.js?v=9';
+import{parseAmount}from'./core.js?v=9';
+import{FUND_SOURCE,FIXED_SOURCE,fundMappings,normalizeFunds,normalizeFixed,evaluateFund,evaluateFixed,sourceReady,snapshotStatus}from'./investments.js?v=9';
 const $=id=>document.getElementById(id);
-const money=value=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:2}).format(value);
-const el=(tag,text,cls)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(cls)node.className=cls;return node;};
-const link=(label,url)=>{const node=el('a',label);node.href=url;node.target='_blank';node.rel='noopener';return node;};
+const money=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:2}).format(n);
+const percent=n=>(n*100).toLocaleString('es-AR',{maximumFractionDigits:2})+'%';
+const date=d=>d?d.split('-').reverse().join('/'):'No informada';
+const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
+const link=(text,url)=>{const n=el('a',text);n.href=url;n.target='_blank';n.rel='noopener';return n;};
 export function initPesos({read,save}){
- let rows=[],status='idle',receivedAt=null,rejected=0,pending=false;
- const cached=read('mi-dolar-pesos-source',null);
- if(cached&&typeof cached==='object'){try{rows=normalizePesos(cached.raw).rows;receivedAt=Number.isFinite(Date.parse(cached.receivedAt))&&Date.parse(cached.receivedAt)<=Date.now()+60000?cached.receivedAt:null;}catch{}}
- const prefs=read('mi-dolar-pesos-prefs',{});
- if(typeof prefs.amount==='string'&&Number.isFinite(parseAmount(prefs.amount)))$('pesosAmount').value=prefs.amount;
- if(['1','7','14','30'].includes(prefs.days))$('pesosDays').value=prefs.days;
- // Special rates and FCI inclusion require a fresh explicit selection each visit.
- function persist(){save('mi-dolar-pesos-prefs',{amount:$('pesosAmount').value,days:$('pesosDays').value});}
- function render(){
-  const amount=parseAmount($('pesosAmount').value),days=Number($('pesosDays').value);
-  $('pesosError').textContent='';$('pesosResults').replaceChildren();$('pesosMore').replaceChildren();
-  $('pesosStatus').textContent=(status==='loading'?'Consultando tasas…':status==='error'?'La fuente no respondió. Mostramos datos guardados sin destacar una mejor opción.':status==='ok'?'Datos recibidos de ArgentinaDatos.':'Datos guardados: verificando vigencia…')+(receivedAt?' Última consulta correcta: '+new Date(receivedAt).toLocaleString('es-AR',{timeZone:'America/Argentina/Buenos_Aires',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'')+(rejected?' · '+rejected+' registros inválidos descartados.':'');
-  if(!Number.isFinite(amount)){$('pesosError').textContent='Ingresá un monto positivo, hasta 1.000.000.000, sin separador de miles. Ejemplo: 500000,50.';return;}
-  if(!rows.length){$('pesosResults').append(el('p',status==='error'?'No hay tasas verificables para mostrar. Volvé a actualizar.':'Conectando con las tasas reales…','notice'));return;}
-  const tier=$('pesosTier').value,includeFci=$('pesosFci').checked;
-  const compared=comparePesos(rows,{amount,days,tier,includeFci});
-  const best=bestPesos(compared,status);
-  if(best){const banner=el('article',undefined,'pesos-best');banner.append(el('div','MAYOR GANANCIA ESTIMADA ENTRE LAS OPCIONES INCLUIDAS','eyebrow'),el('h2',best.name),el('p',best.type,'small muted'),el('div','+ '+money(best.gain),'pesos-gain'),el('p','En '+days+' días · saldo final estimado '+money(best.total),'small'));$('pesosResults').append(banner);}
-  else $('pesosResults').append(el('p','No hay una opción con datos recientes y cálculo completo para destacar.','notice'));
-  if(tier!=='uala-base'&&!rows.some(row=>row.id===tier))$('pesosResults').append(el('p','La tasa especial elegida no está disponible en la fuente; no la reemplazamos por otra.','notice'));
-  for(const row of compared){const card=el('article',undefined,'pesos-card');card.append(el('h2',row.name),el('p',row.type+' · disponibilidad diaria','small muted'),el('div','+ '+money(row.gain),'pesos-gain'),el('p',(row.partial?'Ganancia estimada sólo del tramo bonificado':'Ganancia estimada')+' en '+days+' días','small'),el('p',(row.tna*100).toLocaleString('es-AR',{maximumFractionDigits:2})+'% TNA · tope '+money(row.cap),'small'));
-   card.append(el('p','Saldo calculado: '+money(row.principal)+(row.excess?' · fuera de ese tope: '+money(row.excess):''),'small muted'));
-   card.append(el('p','Tasa informada al '+row.date.split('-').reverse().join('/')+(row.minimum?' · mínimo '+money(row.minimum):''),'small muted'));
-   if(row.id.startsWith('uala-plus'))card.append(el('p','Requisito: '+row.conditions,'pesos-caution'));
-   if(row.belowMinimum)card.append(el('p','No alcanza el mínimo de '+money(row.minimum)+'.','pesos-caution'));
-   if(row.partial)card.append(el('p','El excedente también puede rendir a la tasa variable del FCI. No lo estimamos ni destacamos esta opción para tu monto.','pesos-caution'));
-   if(!row.fresh)card.append(el('p','Dato de más de 3 días: queda fuera de la mejor opción.','pesos-caution'));
-   const details=document.createElement('details');details.append(el('summary','Condiciones y fuente'),el('p',row.conditions||'Sin condiciones adicionales informadas en el registro de tasas.','small'),el('p',row.note,'small muted'),el('p','Fecha informada por la fuente: '+row.date+'. No equivale a una verificación en tu cuenta.','small muted'),link('Condiciones oficiales',row.url),document.createTextNode(' · '),link('Tasas: ArgentinaDatos',PESOS_SOURCE));card.append(details);$('pesosMore').append(card);
-  }
-  if(!compared.length)$('pesosResults').append(el('p','No hay tasas disponibles para tu selección.','notice'));
+ const feeds={accounts:{name:'Cuentas y bonificación Fiwind',url:PESOS_SOURCE,normalize:normalizePesos},funds:{name:'Fondos asociados a billeteras',url:FUND_SOURCE,normalize:normalizeFunds},fixed:{name:'Plazos fijos · BCRA y bancos vía ArgentinaDatos',url:FIXED_SOURCE,normalize:normalizeFixed}};
+ for(const[id,feed]of Object.entries(feeds)){Object.assign(feed,{pollMs:id==='accounts'?120000:600000,ttlMs:id==='accounts'?180000:900000,rows:[],status:'idle',receivedAt:null,rejected:0,error:''});const cache=read('mi-dolar-feed-'+id,null);if(cache){try{feed.rows=feed.normalize(cache.raw).rows;if(Number.isFinite(Date.parse(cache.receivedAt))&&Date.parse(cache.receivedAt)<=Date.now()+60000)feed.receivedAt=cache.receivedAt;}catch{}}}
+ const prefs=read('mi-dolar-pesos-prefs',{});if(typeof prefs.amount==='string'&&Number.isFinite(parseAmount(prefs.amount)))$('pesosAmount').value=prefs.amount;if(['1','7','14','30','60','90'].includes(prefs.days))$('pesosDays').value=prefs.days;
+ let pending=false;
+ function details(row,feed){const box=document.createElement('details');box.className='product-details';box.append(el('summary','Condiciones y trazabilidad'));
+  for(const text of[row.conditions,row.note])if(text)box.append(el('p',text,'small'));
+  if(row.fundName)box.append(el('p','Rescate informado: '+row.settlement+' días de liquidación; confirmá horarios en la app.','small'),el('p',row.fundName+' · retorno de '+row.periodDays+' días: '+row.periodReturn.toLocaleString('es-AR')+'%. TNA equivalente calculada; no es la tasa actual de la app. Clase de referencia del catálogo: confirmá qué clase aplica a tu cuenta.','small'));
+  box.append(el('p','Fecha original: '+date(row.date)+'. Última lectura correcta: '+(feed.receivedAt?new Date(feed.receivedAt).toLocaleString('es-AR',{timeZone:'America/Argentina/Buenos_Aires',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'sin lectura correcta')+'.','small muted'));
+  if(row.appliedTier){const t=row.appliedTier;box.append(el('p','Tramo publicado: monto mínimo '+(t.montoMinimo===null?'no informado':money(t.montoMinimo))+' / máximo '+(t.montoMaximo===null?'no informado':money(t.montoMaximo))+'; plazo '+t.plazoMinDias+' a '+(t.plazoMaxDias??'extremo no informado')+' días.','small'));}
+  if(row.kind==='fixed')box.append(el('p','TNA de referencia para $100.000 a 30 días: clientes '+(row.customer===null?'no informada':percent(row.customer))+' / no clientes '+(row.nonCustomer===null?'no informada':percent(row.nonCustomer))+'.','small'));
+  if(row.kind==='fixed')box.append(el('p','Referencia general BCRA: $100.000 a 30 días. Otros montos/plazos sólo se calculan con tramos explícitos. Límites nulos del tramo se interpretan como extremos abiertos; confirmá mínimos y elegibilidad en el banco. Sin fecha de tasa no participa de una mejor opción vigente.','small'));
+  box.append(link('Entidad / fondo',row.url),document.createTextNode(' · '),link('Datos de la fuente',feed.url));return box;
  }
- async function refresh(){if(pending)return;pending=true;status='loading';render();try{const response=await fetch(PESOS_SOURCE,{signal:AbortSignal.timeout(15000),cache:'no-store',credentials:'omit'});if(!response.ok)throw new Error('HTTP '+response.status);const raw=await response.json(),normalized=normalizePesos(raw);rows=mergePesos(rows,normalized.rows);rejected=normalized.rejected;receivedAt=new Date().toISOString();save('mi-dolar-pesos-source',{raw:rows.map(row=>({fondo:row.fondo,tna:row.tna,tope:row.cap,fecha:row.date,condiciones:row.conditions,plazoMinDias:0,plazoMaxDias:0})),receivedAt});status='ok';}catch{status='error';}finally{pending=false;render();}}
- for(const id of ['pesosAmount','pesosDays','pesosTier','pesosFci'])$(id).addEventListener(id==='pesosAmount'?'input':'change',()=>{persist();render();});
- render();return{render,refresh};
+ function card(row,feed,days,bestId){const box=el('article',undefined,'product-card'+(row.id===bestId?' product-best':'')),head=el('div',undefined,'product-heading');head.append(el('h3',row.name));if(row.id===bestId)head.append(el('span','Mayor estimación','product-badge'));box.append(head,el('p',row.type,'product-type'),el('p',snapshotStatus(row,feed)+(row.date?' · '+date(row.date):''),'product-quality'));
+  box.append(el('div',row.gain===null?'Sin cálculo aplicable':(row.gain>=0?'+ ':'− ')+money(Math.abs(row.gain)),'product-gain'),el('p',row.kind==='fund'?'Escenario a '+days+' días si se repitiera el rendimiento histórico':row.kind==='fixed'?'Interés de referencia al vencimiento · '+days+' días':'Ganancia estimada en '+days+' días','small muted'));
+  if(row.tna!==null)box.append(el('p',percent(row.tna)+(row.kind==='fund'?' TNA equivalente histórica':' TNA'),'small'));
+  if(row.cap)box.append(el('p','Tope '+money(row.cap)+' · saldo calculado '+money(row.principal),'small'));
+  if(row.kind==='fund')box.append(el('p','Tope de la app no verificado · mínimo del fondo '+money(row.minimum),'small'));
+  if(row.kind==='fixed')box.append(el('p','Dinero inmovilizado · '+($('pesosCustomer').value==='yes'?'tasa para clientes':'tasa para no clientes'),'small'));
+  if(row.excess)box.append(el('p','Fuera del tope calculado: '+money(row.excess),'product-caution'));
+  if(row.belowMinimum)box.append(el('p','No alcanza el mínimo de '+money(row.minimum),'product-caution'));
+  if(row.partial)box.append(el('p','Excedente Fiwind con rendimiento variable no estimado.','product-caution'));
+  if(row.reason&&row.kind!=='fund')box.append(el('p',row.reason,'product-caution'));else if(row.kind==='fund'&&row.gain===null)box.append(el('p',row.reason,'product-caution'));
+  if(row.id?.startsWith('uala-plus'))box.append(el('p',row.conditions,'product-caution'));
+  box.append(details(row,feed));return box;
+ }
+ function group(title,description,rows,feed,days,bestId){const box=el('section',undefined,'product-group');box.append(el('h2',title),el('p',description,'small muted'));if(!rows.length)box.append(el('p',feed.status==='loading'?'Consultando…':'Sin registros válidos disponibles.','notice'));for(const row of rows.slice(0,3))box.append(card(row,feed,days,bestId));if(rows.length>3){const more=document.createElement('details');more.className='more-products';more.append(el('summary','Ver '+(rows.length-3)+(rows.length===4?' opción más':' opciones más')));for(const row of rows.slice(3))more.append(card(row,feed,days,bestId));box.append(more);}return box;}
+ function render(){const amount=parseAmount($('pesosAmount').value),days=Number($('pesosDays').value),category=$('pesosCategory').value,lock=$('pesosLiquidity').value==='locked';$('pesosReadable').textContent=Number.isFinite(amount)?money(amount):'';$('pesosError').textContent='';$('pesosResults').replaceChildren();$('pesosMore').replaceChildren();
+  const states=Object.values(feeds);$('pesosStatus').textContent=states.filter(f=>sourceReady(f)).length+'/'+states.length+' consultas de ArgentinaDatos vigentes. La fecha del dato se muestra en cada opción.';$('pesosSources').replaceChildren();
+  for(const feed of states){const box=el('div',undefined,'source-status');box.append(el('strong',feed.name),el('p',(feed.status==='loading'?'Consultando':feed.status==='ok'?'Consulta recibida':feed.status==='error'?'No disponible; datos guardados':'Datos guardados sin verificar')+' · '+feed.rows.length+' productos · '+feed.rejected+' registros descartados','small'));if(feed.error)box.append(el('p',feed.error,'product-caution'));box.append(link('Ver fuente',feed.url));$('pesosSources').append(box);}
+  if(!Number.isFinite(amount)||!Number.isInteger(days)||days<1||days>90){$('pesosError').textContent='Ingresá un monto positivo, hasta 1.000.000.000, sin separador de miles. Ejemplo: 500000,50.';return;}
+  const accounts=comparePesos(feeds.accounts.rows,{amount,days,tier:$('pesosTier').value,includeFci:$('pesosFci').checked}).map(r=>({...r,kind:r.id==='fiwind'?'fund-bonus':'bank'})),banks=accounts.filter(r=>r.kind==='bank'),bonus=accounts.filter(r=>r.kind!=='bank');
+  const best=bestPesos(banks,sourceReady(feeds.accounts)?'ok':'error');
+  if(category==='all'||category==='bank')$('pesosMore').append(group('Cuentas remuneradas','Tasas variables sobre tu saldo. La mayor estimación se compara sólo dentro de este grupo.',banks,feeds.accounts,days,best?.id));
+  if(category==='all'||category==='fund'){const funds=feeds.funds.rows.map(r=>evaluateFund(r,{amount,days,lock})).sort((a,b)=>Number(b.id==='mercado-pago')-Number(a.id==='mercado-pago')||(b.gain??-Infinity)-(a.gain??-Infinity));$('pesosMore').append(group('Billeteras · fondos asociados','Escenarios históricos, no tasas actuales garantizadas de las billeteras. No elegimos un ganador entre fondos y depósitos.',funds,feeds.funds,days));if(bonus.length)$('pesosMore').append(group('Fiwind · bonificación','FCI con bonificación variable; excedente fuera de cálculo.',bonus,feeds.accounts,days));const missing=Object.values(fundMappings).filter(m=>!feeds.funds.rows.some(r=>r.id===m.id));if(missing.length)$('pesosMore').append(el('p','Sin dato válido: '+missing.map(r=>r.name).join(', '),'notice'));}
+  if(category==='all'||category==='fixed'){const fixed=feeds.fixed.rows.map(r=>evaluateFixed(r,{amount,days,lock,customer:$('pesosCustomer').value==='yes'})).sort((a,b)=>(b.gain??-Infinity)-(a.gain??-Infinity)||a.name.localeCompare(b.name));$('pesosMore').append(group('Plazos fijos','Tasa pactada al constituir. Las referencias no traen fecha original y quedan fuera de una mejor opción vigente.',fixed,feeds.fixed,days));}
+  $('pesosResults').append(el('p',category==='fixed'&&!lock?'Para simular un plazo fijo, elegí «Puedo esperar al vencimiento».':category==='fund'?'Escenarios del fondo: no son ofertas de rendimiento de la app.':'Comparación por producto: revisá disponibilidad, requisitos y fecha antes de decidir.','comparison-context'));
+ }
+ async function refresh(force=false){if(pending)return;const due=Object.entries(feeds).filter(([,f])=>force||f.status!=='ok'||Date.now()-Date.parse(f.receivedAt)>=f.pollMs);if(!due.length)return;pending=true;for(const[,f]of due)f.status='loading';render();await Promise.allSettled(due.map(async([id,f])=>{try{const response=await fetch(f.url,{signal:AbortSignal.timeout(15000),cache:'no-store',credentials:'omit'});if(!response.ok)throw new Error('HTTP '+response.status);let raw=await response.json();const data=f.normalize(raw);if(data.rows.some(r=>r.date&&f.rows.some(old=>old.id===r.id&&old.date>r.date)))throw new Error('La fecha retrocedió; conservamos la lectura anterior sin destacarla.');f.rows=data.rows;f.rejected=data.rejected;f.receivedAt=new Date().toISOString();f.status='ok';f.error='';if(id==='funds')raw={fondos:raw.fondos.filter(r=>Object.hasOwn(fundMappings,r?.nombre)).map(({nombre,fecha,moneda,tipoRenta,inversionMinima,plazoLiquidacionDias,rendimientos})=>({nombre,fecha,moneda,tipoRenta,inversionMinima,plazoLiquidacionDias,rendimientos}))};save('mi-dolar-feed-'+id,{raw,receivedAt:f.receivedAt});}catch(error){f.status='error';f.error=error.message?.includes('retrocedió')?error.message:'Consulta no validada. No destacamos estos datos.';}finally{render();}}));pending=false;}
+ for(const id of['pesosAmount','pesosDays','pesosTier','pesosFci','pesosCategory','pesosLiquidity','pesosCustomer'])$(id).addEventListener(id==='pesosAmount'?'input':'change',()=>{save('mi-dolar-pesos-prefs',{amount:$('pesosAmount').value,days:$('pesosDays').value});render();});render();return{render,refresh};
 }

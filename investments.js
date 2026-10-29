@@ -1,6 +1,29 @@
-import{argentinaDay,pesosFresh}from'./pesos.js?v=9';
+import{argentinaDay,pesosFresh}from'./pesos.js?v=10';
 export const FUND_SOURCE='https://api.argentinadatos.com/v1/finanzas/fci/comparatasas';
 export const FIXED_SOURCE='https://api.argentinadatos.com/v1/finanzas/tasas/plazoFijo';
+export const OFFICIAL_FIXED_SOURCE='./data/official-fixed.json';
+export function normalizeOfficialFixed(raw,now=Date.now()){
+ if(raw?.schemaVersion!==1||!Array.isArray(raw.products))throw new Error('Formato oficial inválido');
+ const rows=[],seen=new Set();let rejected=0;
+ const hosts={'official-nacion':'www.bna.com.ar','official-provincia':'www.bancoprovincia.com.ar'};
+ for(const p of raw.products){try{
+  if(!p||!Object.hasOwn(hosts,p.id)||seen.has(p.id)||typeof p.name!=='string'||!validDate(p.effectiveFrom,now)||!Number.isFinite(Date.parse(p.checkedAt))||Date.parse(p.checkedAt)>now+60000||Date.parse(p.checkedAt)<Date.parse(p.effectiveFrom)||p.publicationDate!==null&&(!validDate(p.publicationDate,now)||p.publicationDate<p.effectiveFrom)||!Array.isArray(p.tiers)||!p.tiers.length||!/^\w{64}$/.test(p.sha256)||![p.url,p.landing].every(u=>new URL(u).protocol==='https:'&&new URL(u).hostname===hosts[p.id])||p.minimum!==null&&(!Number.isFinite(p.minimum)||p.minimum<0))throw Error();
+  let previous=29;for(const t of p.tiers){if(t.plazoMinDias!==previous+1||!Number.isInteger(t.plazoMaxDias)||t.plazoMaxDias<t.plazoMinDias||t.plazoMaxDias>370||!Number.isFinite(t.tna)||t.tna<=0||t.tna>1||t.montoMinimo!==p.minimum||t.montoMaximo!==null)throw Error();previous=t.plazoMaxDias;}
+  seen.add(p.id);rows.push({...p,kind:'official-fixed',type:'Plazo fijo · '+p.channel,date:p.effectiveFrom,source:'official',customer:null,nonCustomer:null});
+ }catch{rejected++;}}
+ if(!rows.length)throw new Error('Sin tarifarios oficiales verificados');return{rows,rejected};
+}
+export function officialCurrent(row,now=Date.now()){const age=now-Date.parse(row.checkedAt);return Number.isFinite(age)&&age>=-60000&&age<=86400000;}
+export function evaluateOfficialFixed(row,{amount,days,lock=false,customer=true},now=Date.now()){
+ const result={...row,gain:null,total:null,tna:null,eligible:false,reason:''};
+ if(!officialCurrent(row,now))return{...result,reason:'Verificación del documento de más de 24 horas. Actualización pendiente; no calculamos una oferta vigente.'};
+ if(!customer)return{...result,reason:'Este tarifario corresponde al canal para clientes. No extrapolamos la tasa a no clientes.'};
+ if(days<30||!lock)return{...result,reason:'Requiere al menos 30 días e inmovilizar el dinero hasta el vencimiento.'};
+ if(row.minimum!==null&&amount<row.minimum)return{...result,reason:'No alcanza el mínimo de este canal.'};
+ const tier=row.tiers.find(t=>days>=t.plazoMinDias&&days<=t.plazoMaxDias);if(!tier)return{...result,reason:'Sin tramo oficial para este plazo.'};
+ const gain=amount*tier.tna*days/365;
+ return{...result,tna:tier.tna,gain,total:amount+gain,appliedTier:tier,reason:'Interés según tarifario oficial publicado. '+(row.minimum===null?'Mínimo a confirmar. ':'')+'Confirmá elegibilidad y tasa final antes de constituir.'};
+}
 export const fundMappings={
  'Mercado Fondo - Clase A':{id:'mercado-pago',name:'Mercado Pago',url:'https://estadisticas.cafci.org.ar/fondos/798?clase=1982'},
  'Delta Pesos - Clase X':{id:'personal-pay',name:'Personal Pay',url:'https://www.personal.com.ar/pay/blog/inversiones/calcular-rendimiento'},
@@ -59,6 +82,7 @@ export function sourceReady(source,now=Date.now()){
 }
 export function snapshotStatus(row,source,now=Date.now()){
  if(!sourceReady(source,now))return 'Consulta no vigente';
+ if(row.kind==='official-fixed')return officialCurrent(row,now)?'Tarifario oficial verificado':'Verificación vencida';
  if(!row.date)return 'Fecha de tasa no informada';
  return pesosFresh(row,now)?'Dato fechado reciente':'Dato demorado';
 }

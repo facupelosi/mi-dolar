@@ -1,0 +1,53 @@
+name: Verify official rates and publish
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: pip install pypdf==6.10.0
+      - run: npm test
+      - run: python scripts/collect_official_pf.py
+      - name: Record official source verification
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet -- data/official-fixed.json; then
+            git add data/official-fixed.json
+            git commit -m "Refresh official fixed-deposit source verification"
+            git push
+          fi
+      - name: Prepare public files only
+        run: |
+          mkdir -p public/data
+          cp index.html *.js style.css icon.svg manifest.webmanifest apple-touch-icon.png public/
+          cp data/official-fixed.json public/data/
+          touch public/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+      - uses: actions/deploy-pages@v4
+        id: deployment
+

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {normalizeOfficialFixed,evaluateOfficialFixed,snapshotStatus} from '../investments.js';
-const raw=JSON.parse(readFileSync(new URL('../data/official-fixed.json',import.meta.url)));
+const raw=JSON.parse(readFileSync(new URL('./fixtures/official-fixed.json',import.meta.url)));
 const now=Date.parse(raw.generatedAt);
 const options={amount:500000,days:30,lock:true,customer:true};
 test('Documento oficial conserva vigencia original y fecha de verificación separadas',()=>{

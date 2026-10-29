@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-29T19:19:59.188363+00:00",
+  "products": [
+    {
+      "id": "official-nacion",
+      "name": "Banco Nación",
+      "effectiveFrom": "2026-10-02",
+      "publicationDate": "2026-10-26",
+      "checkedAt": "2026-10-29T19:19:59.188363+00:00",
+      "minimum": 500,
+      "channel": "Canal electrónico · personas humanas",
+      "conditions": "Mínimo según la tabla oficial del canal electrónico. Para clientes, personas humanas, sector privado; no aplica a sucursales, empresas ni UVA.",
+      "url": "https://www.bna.com.ar/BackOffice/dataBase/tasas_ope_4009.pdf",
+      "landing": "https://www.bna.com.ar/Home/InformacionAlUsuarioFinanciero",
+      "sha256": "44c8d8b7f980cfc6aef17f63bf7673be28346e551d2ca16662dfc9e73bf24185",
+      "tiers": [
+        {
+          "plazoMinDias": 30,
+          "plazoMaxDias": 59,
+          "tna": 0.1925,
+          "montoMinimo": 500,
+          "montoMaximo": null
+        },
+        {
+          "plazoMinDias": 60,
+          "plazoMaxDias": 89,
+          "tna": 0.2,
+          "montoMinimo": 500,
+          "montoMaximo": null
+        },
+        {
+          "plazoMinDias": 90,
+          "plazoMaxDias": 179,
+          "tna": 0.2025,
+          "montoMinimo": 500,
+          "montoMaximo": null
+        },
+        {
+          "plazoMinDias": 180,
+          "plazoMaxDias": 269,
+          "tna": 0.215,
+          "montoMinimo": 500,
+          "montoMaximo": null
+        },
+        {
+          "plazoMinDias": 270,
+          "plazoMaxDias": 370,
+          "tna": 0.23,
+          "montoMinimo": 500,
+          "montoMaximo": null
+        }
+      ]
+    },
+    {
+      "id": "official-provincia",
+      "name": "Banco Provincia",
+      "effectiveFrom": "2026-09-04",
+      "publicationDate": null,
+      "checkedAt": "2026-10-29T19:19:59.188363+00:00",
+      "minimum": null,
+      "channel": "BIP / TAS · personas humanas",
+      "conditions": "El tarifario considera la cartera total de plazos fijos en pesos no ajustables. En cotitularidad, distribuye los certificados proporcionalmente. Mínimo y elegibilidad a confirmar en BIP; no aplica a ATM ni empresas.",
+      "url": "https://www.bancoprovincia.com.ar/content/docs/Plazos_fijos_tasas_vigentes.pdf",
+      "landing": "https://www.bancoprovincia.com.ar/content/docs/Plazos_fijos_tasas_vigentes.pdf",
+      "sha256": "1cd35d0db8072e5a27d225b81c0ddb72b84ed7d0ccbccf896f472e0388d2de0c",
+      "tiers": [
+        {
+          "plazoMinDias": 30,
+          "plazoMaxDias": 44,
+          "tna": 0.21,
+          "montoMinimo": null,
+          "montoMaximo": null
+        },
+        {
+          "plazoMinDias": 45,
+          "plazoMaxDias": 59,
+          "tna": 0.21,
+          "montoMinimo": null,
+          "montoMaximo": null
+        },
+        {
+          "plazoMinDias": 60,
+          "plazoMaxDias": 89,
+          "tna": 0.2175,
+          "montoMinimo": null,
+          "montoMaximo": null
+        },
+        {
+          "plazoMinDias": 90,
+          "plazoMaxDias": 119,
+          "tna": 0.22,
+          "montoMinimo": null,
+          "montoMaximo": null
+        },
+        {
+          "plazoMinDias": 120,
+          "plazoMaxDias": 179,
+          "tna": 0.225,
+          "montoMinimo": null,
+          "montoMaximo": null
+        },
+        {
+          "plazoMinDias": 180,
+          "plazoMaxDias": 364,
+          "tna": 0.23,
+          "montoMinimo": null,
+          "montoMaximo": null
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

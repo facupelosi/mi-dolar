@@ -1,6 +1,6 @@
-import {initPesos} from './pesos-ui.js?v=10.1';
-import {fetchBrubankReference,validBrubankCache} from './brubank.js?v=10.1';
-import {parseAmount,quality,calculate,normalizeComparadolar,normalizeBanks,validObservation,ingest,reconcile,references,bestReference,recordHealth,healthSummary,resolveFavorites,coverageGaps,normalizeMarketReference} from './core.js?v=10.1';
+import {initPesos} from './pesos-ui.js?v=11';
+import {fetchBrubankReference,validBrubankCache} from './brubank.js?v=11';
+import {parseAmount,quality,calculate,normalizeComparadolar,normalizeBanks,validObservation,ingest,reconcile,references,bestReference,recordHealth,healthSummary,resolveFavorites,coverageGaps,normalizeMarketReference} from './core.js?v=11';
 const $=id=>document.getElementById(id);
 const money=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:2}).format(n);
 const usd=n=>'USD '+new Intl.NumberFormat('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n);

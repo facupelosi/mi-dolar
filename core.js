@@ -15,3 +15,9 @@ export function mergeBanks(quotes,data,now=Date.now()){
  return out;
 }
 export function ranked(quotes,{mode,market,selected,ultra,now=Date.now(),confirmed=false}){return quotes.filter(q=>q.market===market&&selected(q.id)&&!quality(q,now)&&(!q.condition||(q.id==='brubank-ultra'&&ultra))&&(!confirmed||q.knownFees)).sort((a,b)=>mode==='buy'?a.ask-b.ask:b.bid-a.bid);}
+// Retain delayed quotes for display. They must never displace a fresh quote.
+export function references(quotes,{market,selected,ultra,now=Date.now()}){
+ return quotes.filter(q=>q.market===market&&selected(q.id)&&[null,'Dato demorado'].includes(quality(q,now))&&(!q.condition||(q.id==='brubank-ultra'&&ultra)));
+}
+export function bestReference(quotes,config){const all=references(quotes,config);const fresh=all.filter(q=>!quality(q,config.now));let pool=fresh.length?fresh:all;if(!fresh.length&&pool.length){const newest=Math.max(...pool.map(q=>Date.parse(q.at)));pool=pool.filter(q=>newest-Date.parse(q.at)<=120000);}return pool.sort((a,b)=>config.mode==='buy'?a.ask-b.ask:b.bid-a.bid)[0]||null;}
+export function retainMissing(current,previous){const ids=new Set(current.map(q=>q.id));return [...current,...previous.filter(q=>!ids.has(q.id))];}

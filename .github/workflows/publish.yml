@@ -40,12 +40,8 @@ jobs:
             git commit -m "Refresh official fixed-deposit source verification"
             git push
           fi
-      - name: Prepare public files only
-        run: |
-          mkdir -p public/data
-          cp index.html *.js style.css icon.svg manifest.webmanifest apple-touch-icon.png public/
-          cp data/official-fixed.json public/data/
-          touch public/.nojekyll
+      - name: Prepare public files and software version
+        run: python scripts/prepare_public.py
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

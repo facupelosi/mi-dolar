@@ -1,6 +1,6 @@
-import{PESOS_SOURCE,normalizePesos,comparePesos,bestPesos}from'./pesos.js?v=11';
-import{parseAmount}from'./core.js?v=11';
-import{OFFICIAL_FIXED_SOURCE,normalizeOfficialFixed,evaluateOfficialFixed,FUND_SOURCE,FIXED_SOURCE,fundMappings,normalizeFunds,normalizeFixed,evaluateFund,evaluateFixed,sourceReady,snapshotStatus}from'./investments.js?v=11';
+import{PESOS_SOURCE,normalizePesos,comparePesos,bestPesos}from'./pesos.js?v=12';
+import{parseAmount}from'./core.js?v=12';
+import{OFFICIAL_FIXED_SOURCE,normalizeOfficialFixed,evaluateOfficialFixed,FUND_SOURCE,FIXED_SOURCE,fundMappings,normalizeFunds,normalizeFixed,evaluateFund,evaluateFixed,sourceReady,snapshotStatus}from'./investments.js?v=12';
 const $=id=>document.getElementById(id);
 const money=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:2}).format(n);
 const percent=n=>(n*100).toLocaleString('es-AR',{maximumFractionDigits:2})+'%';

@@ -1,6 +1,7 @@
-import {initPesos} from './pesos-ui.js?v=11';
-import {fetchBrubankReference,validBrubankCache} from './brubank.js?v=11';
-import {parseAmount,quality,calculate,normalizeComparadolar,normalizeBanks,validObservation,ingest,reconcile,references,bestReference,recordHealth,healthSummary,resolveFavorites,coverageGaps,normalizeMarketReference} from './core.js?v=11';
+import './updates.js?v=12';
+import {initPesos} from './pesos-ui.js?v=12';
+import {fetchBrubankReference,validBrubankCache} from './brubank.js?v=12';
+import {parseAmount,quality,calculate,normalizeComparadolar,normalizeBanks,validObservation,ingest,reconcile,references,bestReference,recordHealth,healthSummary,resolveFavorites,coverageGaps,normalizeMarketReference} from './core.js?v=12';
 const $=id=>document.getElementById(id);
 const money=n=>new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:2}).format(n);
 const usd=n=>'USD '+new Intl.NumberFormat('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
@@ -75,4 +76,4 @@ async function refresh(force=false){if(busy)return;if(Date.now()-lastAttempt<600
  lastConsulted=received;save('mi-dolar-observations',observations);save('mi-dolar-history',history);save('mi-dolar-health',health);busy=false;$('refresh').disabled=false;$('sources').replaceChildren(...statuses.map(s=>node('p',s,'statusline')));for(const [name,url]of sources.map(s=>[s.name,s.name==='CriptoYa'?'https://criptoya.com/':'https://comparadolar.ar/'])){const p=node('p'),a=node('a',name);a.href=url;a.target='_blank';a.rel='noopener';p.append(a);$('sources').append(p);}quotes=reconcile(observations);options();render();
 }
 $('buy').addEventListener('click',()=>{mode='buy';render();});$('sell').addEventListener('click',()=>{mode='sell';render();});for(const id of ['unit','market','ultra','favoritesOnly'])$(id).addEventListener('change',render);$('amount').addEventListener('input',render);$('refresh').addEventListener('click',()=>refresh(true));document.addEventListener('visibilitychange',()=>{if(!document.hidden){render();if(Date.now()-lastAttempt>=60000)refresh();}});setInterval(()=>{if(!document.hidden){render();if(Date.now()-lastAttempt>=60000)refresh();}},15000);options();render();setView('quotes');refresh();
-if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(()=>{});
+if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).catch(()=>{});

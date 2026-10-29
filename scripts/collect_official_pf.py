@@ -56,6 +56,11 @@ def collect():
             url = spec['url']
             if url is None:
                 html = get(spec['landing']).decode('utf-8')
+                minimums = re.findall(r'Mínimo\s*\$\s*([\d.]+)', html)
+                if len(minimums) != 3 or 'Tasas Canal electrónico' not in html:
+                    raise ValueError('Changed minimum/channel table')
+                spec['minimum'] = int(minimums[1].replace('.', ''))
+                spec['note'] = 'Mínimo según la tabla oficial del canal electrónico. Para clientes, personas humanas, sector privado; no aplica a sucursales, empresas ni UVA.'
                 path = re.search(r'href=[\"\']([^\"\']+tasas_ope[^\"\']+\.pdf)[\"\']', html, re.I)[1]
                 url = 'https://www.bna.com.ar' + path if path.startswith('/') else path
                 if not url.startswith('https://www.bna.com.ar/'):

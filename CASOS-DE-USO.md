@@ -45,3 +45,12 @@ Fecha: 29/10/2026. App: https://facupelosi.github.io/mi-dolar/?v=9
 ## Revertir
 
 La versión anterior es el commit 770121c. Un revert de los cambios de esta versión y nueva publicación restaura la interfaz previa; las preferencias y snapshots locales usan claves separadas.
+
+## Versión 10 — menú y tarifarios oficiales
+
+- Menú principal: Dólar / Mi plata. Dólar primero; calculadora a un toque debajo de los dos precios. Sin pestaña Fuentes. Mis apps y ajustes en desplegable secundario, trazabilidad conservada por producto.
+- $500.000 / 30 días / clientes / inmovilizar: Provincia BIP 21% TNA, interés $8.630,14; Nación electrónico 19,25%, $7.910,96 según documentos verificados 29/10. Son ejemplos fechados, no tasas permanentes.
+- 60 días Nación: toma 20% y no reutiliza 19,25%. Siete días, liquidez inmediata, no cliente y Nación por debajo de $500: sin cálculo aplicable.
+- Sin verificación del documento durante más de 24h, consulta fallida, URL ajena al banco, fecha futura, porcentajes en unidad incorrecta o tramos superpuestos: no se ofrece una tasa vigente.
+- Referencias del BCRA/ArgentinaDatos sin fecha original: desplegable separado, no compiten con los tarifarios oficiales.
+- Automatización preparada pero no activada: falta permiso workflow de GitHub. No prometer refresco automático del documento mientras no se configure. Actualizar en el cliente vuelve a leer la publicación, sin renovar la fecha original.

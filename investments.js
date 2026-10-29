@@ -1,4 +1,4 @@
-import{argentinaDay,pesosFresh}from'./pesos.js?v=10';
+import{argentinaDay,pesosFresh}from'./pesos.js?v=10.1';
 export const FUND_SOURCE='https://api.argentinadatos.com/v1/finanzas/fci/comparatasas';
 export const FIXED_SOURCE='https://api.argentinadatos.com/v1/finanzas/tasas/plazoFijo';
 export const OFFICIAL_FIXED_SOURCE='./data/official-fixed.json';

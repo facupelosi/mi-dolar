@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-29T19:15:37.336919+00:00",
+  "generatedAt": "2026-10-29T19:19:59.188363+00:00",
   "products": [
     {
       "id": "official-nacion",
       "name": "Banco Nación",
       "effectiveFrom": "2026-10-02",
       "publicationDate": "2026-10-26",
-      "checkedAt": "2026-10-29T19:15:37.336919+00:00",
+      "checkedAt": "2026-10-29T19:19:59.188363+00:00",
       "minimum": 500,
       "channel": "Canal electrónico · personas humanas",
-      "conditions": "Mínimo $500 según la tabla oficial del canal electrónico. Para clientes, sector privado; no aplica a sucursales, empresas ni UVA.",
+      "conditions": "Mínimo según la tabla oficial del canal electrónico. Para clientes, personas humanas, sector privado; no aplica a sucursales, empresas ni UVA.",
       "url": "https://www.bna.com.ar/BackOffice/dataBase/tasas_ope_4009.pdf",
       "landing": "https://www.bna.com.ar/Home/InformacionAlUsuarioFinanciero",
       "sha256": "44c8d8b7f980cfc6aef17f63bf7673be28346e551d2ca16662dfc9e73bf24185",
@@ -57,7 +57,7 @@
       "name": "Banco Provincia",
       "effectiveFrom": "2026-09-04",
       "publicationDate": null,
-      "checkedAt": "2026-10-29T19:15:37.336919+00:00",
+      "checkedAt": "2026-10-29T19:19:59.188363+00:00",
       "minimum": null,
       "channel": "BIP / TAS · personas humanas",
       "conditions": "El tarifario considera la cartera total de plazos fijos en pesos no ajustables. En cotitularidad, distribuye los certificados proporcionalmente. Mínimo y elegibilidad a confirmar en BIP; no aplica a ATM ni empresas.",

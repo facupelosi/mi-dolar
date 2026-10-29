@@ -46,3 +46,11 @@ export function reconcile(observations,now=Date.now()){
 }
 export function recordHealth(history,sample){return [...history,sample].slice(-60);}
 export function healthSummary(history,source){const runs=history.filter(r=>r.source===source);const ok=runs.filter(r=>r.ok);return{runs:runs.length,successes:ok.length,last:runs.at(-1)||null,rejected:runs.reduce((s,r)=>s+(r.rejected||0),0),regressions:runs.reduce((s,r)=>s+(r.regressions||0),0)};}
+export function resolveFavorites(quotes,config){
+ const base=config.selected;
+ if(!config.favoritesOnly)return{selected:base,fallback:false};
+ const favoriteSelected=id=>base(id)&&config.favorites.has(id);
+ const available=references(quotes,{...config,selected:favoriteSelected});
+ if(available.length)return{selected:favoriteSelected,fallback:false};
+ return{selected:base,fallback:true};
+}

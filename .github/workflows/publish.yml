@@ -31,12 +31,13 @@ jobs:
       - run: pip install pypdf==6.10.0
       - run: npm test
       - run: python scripts/collect_official_pf.py
+      - run: python scripts/collect_official_apps.py
       - name: Record official source verification
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if ! git diff --quiet -- data/official-fixed.json; then
-            git add data/official-fixed.json
+          if ! git diff --quiet -- data/official-fixed.json data/official-apps.json; then
+            git add data/official-fixed.json data/official-apps.json
             git commit -m "Refresh official fixed-deposit source verification"
             git push
           fi
@@ -66,6 +67,10 @@ jobs:
                   summary.write('- ' + product['name'] + ': effective since ' + product['effectiveFrom'] + '\n')
           for error in data['errors']:
               print('::warning::' + error['name'] + ': source verification failed; excluded from current comparison')
+          app_data = json.loads(pathlib.Path('data/official-apps.json').read_text())
+          for app in app_data['products']:
+              if app['status'] != 'verified':
+                  print('::warning::Official app page not verified: ' + app['id'])
           if not data['products']:
               raise SystemExit('No official bank source verified. App published with unavailable state.')
           PY

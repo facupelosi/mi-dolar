@@ -76,3 +76,17 @@ Primera ejecución correcta: https://github.com/facupelosi/mi-dolar/actions/runs
 Mi plata se concentra en Naranja X, Mercado Pago, Ualá, Personal Pay, Brubank, Prex y Claro Pay. Las siete aparecen en el primer tramo del ranking gratuito de Finanzas para iPhone Argentina consultado en https://apps.apple.com/ar/iphone/charts/6015 . Es una selección editorial por presencia en el ranking y pertinencia para pesos; no un ranking de usuarios activos ni una afirmación de que sean las siete primeras. Se excluyen bancos tradicionales, apps cuyo uso principal queda fuera de la comparación en pesos y opciones que no están en esta selección. La selección es fechada, no se presenta como ranking en vivo.
 
 Nación y Provincia salen de la UI de Mi plata. Sus documentos históricos y el recolector se conservan para no romper la automatización ni perder trazabilidad del trabajo anterior; no alimentan la comparación visible. Los plazos fijos de referencia se filtran a entidades digitales identificadas (Ualá y Brubank), y sin fecha de tasa no se calcula ganancia vigente. Las otras apps informan ausencia de plazo fijo con tasa fechada verificada, sin afirmar que no ofrezcan inversiones.
+
+## Fuentes oficiales de las siete apps (investigación 29/10/2026)
+
+El recolector scripts/collect_official_apps.py consulta páginas públicas oficiales, sin autenticación, y registra lectura, URL, hash y fecha original por separado. La automatización cada seis horas publica data/official-apps.json. Fallos o cambios de esquema no inventan tasas. La evidencia vence tras 24h y respeta el fin explícito de campañas.
+
+- Naranja X: página cuenta-remunerada, 20% TNA y tope $1M observados; fecha original ausente. Se contrasta con la referencia fechada de la cuenta.
+- Ualá: cuenta-remunerada, base 19%, Plus 1 20%, Plus 2 24%; $10.000 mínimo / $1M tope; campaña publicada 01/10–31/10/2026. Una discrepancia de tasa, tope o nivel con la referencia del cálculo bloquea la ganancia. Plus no se activa por elegirlo en el simulador.
+- Mercado Pago: /cuenta publica 19% anual indicativo en pesos, sin fecha original ni tope explícito. Se usa en un escenario condicionado a que todo el saldo aplique; no se presenta como oferta ejecutable ni participa de un ganador entre depósitos.
+- Brubank: ayuda/10508364-tasas-de-interes-vigentes publica Cuenta Max general 19%, $1M, al 09/09/2026. Se muestra esa fecha sin calcular una oferta actual. FAQ/9926124 confirma que el viernes se adelantan los rendimientos de fin de semana. Los TyC requieren activación y elegibilidad; la app informa la TNA diaria.
+- Personal Pay: blog oficial identifica Delta Pesos clase X; cuentas-remuneradas confirma mínimo $1, sin máximo y rendimiento histórico. No publica un porcentaje numérico vigente en las páginas consultadas.
+- Prex Argentina: ayuda explica TNA de últimos 7 días. Allaria/Fondo/Money-Market publica clase E al 28/10, 1M 1,64%; escenario mensual de 30 días, equivalente anual simple 19,9533%. Es un período distinto del indicador de Prex y conserva la advertencia de clase de referencia a confirmar. No se usó Prex Uruguay.
+- Claro Pay: FAQs identifica SBS Ahorro Pesos y honorarios deducidos; sin porcentaje actual de app. La página del administrador enlazada devolvió 403: no se eludió la restricción; continúa el escenario histórico del catálogo intermediario, identificado como tal.
+
+Las cuatro billeteras no se presentan como depósitos garantizados; se distingue porcentaje indicativo, historial del fondo y tasa nominal de cuenta. Verificar condiciones personales antes de operar.

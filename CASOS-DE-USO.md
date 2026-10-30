@@ -73,3 +73,7 @@ QA de actualización: enlace anterior con v=11 queda en raíz; cambio de versió
 ## Apps populares — selección por App Store Argentina
 
 La vista inicial reúne cuentas (Naranja X/Ualá), escenarios históricos del fondo asociado a Mercado Pago, Personal Pay, Prex y Claro Pay, y Brubank con ausencia de tasa verificable explícita. Se conservan los grupos y no se ordenan como equivalentes depósitos y fondos. No se incluyen Nación/Provincia ni en plazos fijos ni en referencias secundarias de Mi plata. Pruebas de navegador: siete apps presentes, ningún banco tradicional en el panel, ningún cálculo de plazo fijo sin fecha, sin overflow en 320 y 390 px. 67 pruebas de dominio pasan.
+
+## Respaldo oficial por app
+
+Se agregan fuentes oficiales desplegables a todas las apps, con fecha original y lectura separadas. Mercado Pago usa escenario con porcentaje indicativo publicado; Prex usa el retorno mensual fechado de Allaria cuando se puede validar. Brubank muestra 19% al 09/09 sin ganancia actual. Se bloquean discrepancias de cuentas y campañas vencidas; una nueva descarga no renueva la fecha de origen. Pruebas: 73 de dominio; UI sin errores JS, siete apps, MP $500.000/30d da $7.808,22 bajo supuesto publicado, sin cálculo vigente de Brubank y sin bancos tradicionales. Verificado en Chromium, no Safari físico.

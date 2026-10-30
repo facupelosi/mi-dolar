@@ -22,6 +22,7 @@ def prepare(destination=None):
     (destination/'version.json').write_text(json.dumps({'build':build})+'\n',encoding='utf-8')
     (destination/'data').mkdir(exist_ok=True)
     shutil.copyfile(ROOT/'data'/'official-fixed.json',destination/'data'/'official-fixed.json')
+    shutil.copyfile(ROOT/'data'/'official-apps.json',destination/'data'/'official-apps.json')
     (destination/'.nojekyll').touch()
     print('Public software release: '+build)
     return build

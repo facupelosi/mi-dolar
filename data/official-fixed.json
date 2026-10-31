@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-31T12:25:10.584451+00:00",
+  "generatedAt": "2026-10-31T21:31:39.455956+00:00",
   "products": [
     {
       "id": "official-nacion",
       "name": "Banco Nación",
       "effectiveFrom": "2026-10-02",
       "publicationDate": "2026-10-26",
-      "checkedAt": "2026-10-31T12:25:10.584451+00:00",
+      "checkedAt": "2026-10-31T21:31:39.455956+00:00",
       "minimum": 500,
       "channel": "Canal electrónico · personas humanas",
       "conditions": "Mínimo según la tabla oficial del canal electrónico. Para clientes, personas humanas, sector privado; no aplica a sucursales, empresas ni UVA.",
@@ -57,7 +57,7 @@
       "name": "Banco Provincia",
       "effectiveFrom": "2026-09-04",
       "publicationDate": null,
-      "checkedAt": "2026-10-31T12:25:10.584451+00:00",
+      "checkedAt": "2026-10-31T21:31:39.455956+00:00",
       "minimum": null,
       "channel": "BIP / TAS · personas humanas",
       "conditions": "El tarifario considera la cartera total de plazos fijos en pesos no ajustables. En cotitularidad, distribuye los certificados proporcionalmente. Mínimo y elegibilidad a confirmar en BIP; no aplica a ATM ni empresas.",

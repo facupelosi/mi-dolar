@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-18T07:25:06.191682+00:00",
+  "generatedAt": "2026-11-18T20:29:24.033772+00:00",
   "products": [
     {
       "id": "official-nacion",
       "name": "Banco Nación",
-      "effectiveFrom": "2026-10-02",
-      "publicationDate": "2026-10-26",
-      "checkedAt": "2026-11-18T07:25:06.191682+00:00",
+      "effectiveFrom": "2026-11-18",
+      "publicationDate": "2026-11-18",
+      "checkedAt": "2026-11-18T20:29:24.033772+00:00",
       "minimum": 500,
       "channel": "Canal electrónico · personas humanas",
       "conditions": "Mínimo según la tabla oficial del canal electrónico. Para clientes, personas humanas, sector privado; no aplica a sucursales, empresas ni UVA.",
-      "url": "https://www.bna.com.ar/BackOffice/dataBase/tasas_ope_4009.pdf",
+      "url": "https://www.bna.com.ar/BackOffice/dataBase/tasas_ope_4029.pdf",
       "landing": "https://www.bna.com.ar/Home/InformacionAlUsuarioFinanciero",
-      "sha256": "44c8d8b7f980cfc6aef17f63bf7673be28346e551d2ca16662dfc9e73bf24185",
+      "sha256": "d87caa109c506b467855282f3554975a9c0a633c36d2c3df06657a90002e02a9",
       "tiers": [
         {
           "plazoMinDias": 30,
@@ -32,21 +32,21 @@
         {
           "plazoMinDias": 90,
           "plazoMaxDias": 179,
-          "tna": 0.2025,
+          "tna": 0.2275,
           "montoMinimo": 500,
           "montoMaximo": null
         },
         {
           "plazoMinDias": 180,
           "plazoMaxDias": 269,
-          "tna": 0.215,
+          "tna": 0.24,
           "montoMinimo": 500,
           "montoMaximo": null
         },
         {
           "plazoMinDias": 270,
           "plazoMaxDias": 370,
-          "tna": 0.23,
+          "tna": 0.25,
           "montoMinimo": 500,
           "montoMaximo": null
         }
@@ -57,7 +57,7 @@
       "name": "Banco Provincia",
       "effectiveFrom": "2026-09-04",
       "publicationDate": null,
-      "checkedAt": "2026-11-18T07:25:06.191682+00:00",
+      "checkedAt": "2026-11-18T20:29:24.033772+00:00",
       "minimum": null,
       "channel": "BIP / TAS · personas humanas",
       "conditions": "El tarifario considera la cartera total de plazos fijos en pesos no ajustables. En cotitularidad, distribuye los certificados proporcionalmente. Mínimo y elegibilidad a confirmar en BIP; no aplica a ATM ni empresas.",

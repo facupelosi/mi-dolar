@@ -5,7 +5,7 @@
       "id": "nx",
       "url": "https://www.naranjax.com/cuenta-remunerada",
       "kind": "account",
-      "checkedAt": "2026-11-27T21:15:15.364031+00:00",
+      "checkedAt": "2026-11-28T07:45:31.568239+00:00",
       "status": "verified",
       "annualRate": 0.2,
       "cap": 1000000,
@@ -14,13 +14,13 @@
       "validUntil": null,
       "rates": null,
       "note": "Requiere activar la remuneración y mantener el saldo hasta el cierre. La página no informa la fecha original de la tasa.",
-      "sha256": "f15ba3a381f3378da7076da07fad1617bfc81e9fd93a016b0c183e6a210db353"
+      "sha256": "0f6b9a21d9269c575fba6ec7cedf84f2bab1bde0c2aef8d2408d4a6c5cd41bfa"
     },
     {
       "id": "uala",
       "url": "https://www.uala.com.ar/inversiones/cuenta-remunerada",
       "kind": "account",
-      "checkedAt": "2026-11-27T21:15:15.364710+00:00",
+      "checkedAt": "2026-11-28T07:45:31.568812+00:00",
       "status": "verified",
       "annualRate": 0.19,
       "cap": 1000000,
@@ -33,13 +33,13 @@
         "uala-plus2": 0.24
       },
       "note": "Base sin consumos; Plus sólo si ya está activa. Tasas variables. La vigencia publicada no garantiza mantener la tasa durante todo el plazo simulado.",
-      "sha256": "84cea884da1cc0863e279f4d6008b13533c2fc32b1484ab23f2dd8dbb076ed72"
+      "sha256": "dd51c4dcca0833117635197d2227033e2c5062caa969f50fcddb251178aee46a"
     },
     {
       "id": "mercado-pago",
       "url": "https://www.mercadopago.com.ar/cuenta",
       "kind": "indicative",
-      "checkedAt": "2026-11-27T21:15:15.365198+00:00",
+      "checkedAt": "2026-11-28T07:45:31.569231+00:00",
       "status": "verified",
       "annualRate": 0.185,
       "cap": null,
@@ -48,13 +48,13 @@
       "validUntil": null,
       "rates": null,
       "note": "Porcentaje anual indicativo publicado por Mercado Pago. Sin fecha original ni tope explícito en esta página. No es una tasa garantizada ni una oferta autenticada.",
-      "sha256": "0c124c5f6b08b8c8d6b6db3e2173e800b682c8b117a4b2fc75a8bacaff90a4e2"
+      "sha256": "45c4808fec601d90d024ce56c73d567e02574d93f60a51074affff86368222f1"
     },
     {
       "id": "brubank",
       "url": "https://help.brubank.com/es/articles/10508364-tasas-de-interes-vigentes",
       "kind": "dated-reference",
-      "checkedAt": "2026-11-27T21:15:15.365781+00:00",
+      "checkedAt": "2026-11-28T07:45:31.569616+00:00",
       "status": "verified",
       "annualRate": 0.19,
       "cap": 1000000,
@@ -63,14 +63,14 @@
       "validUntil": null,
       "rates": null,
       "note": "Cuenta Max, cartera general. Tarifario al 2026-09-09: no confirma tasa vigente hoy. El producto requiere activación y elegibilidad. Los rendimientos del fin de semana se acreditan adelantados el viernes según la FAQ oficial.",
-      "sha256": "3ea84cdcdc63d0baf9891dc35672afff7adbbe953c051bde356c05d66e6e33dc",
+      "sha256": "de6838bb2f540393c8e51c1f05314866b1d3b457a4d4136b1b17bb8c89f9a8d8",
       "extraUrl": "https://help.brubank.com/es/articles/9926124-que-es-cuenta-max"
     },
     {
       "id": "personal-pay",
       "url": "https://www.personal.com.ar/pay/blog/inversiones/calcular-rendimiento",
       "kind": "fund-method",
-      "checkedAt": "2026-11-27T21:15:15.366545+00:00",
+      "checkedAt": "2026-11-28T07:45:31.570286+00:00",
       "status": "unavailable",
       "annualRate": null,
       "cap": null,
@@ -85,7 +85,7 @@
       "id": "prex",
       "url": "https://www.prexcard.com.ar/centro-de-ayuda/mis-rendimientos/cuenta-remunerada-en-pesos/como-se-calcula-la-tasa-de-rendimiento",
       "kind": "fund-method",
-      "checkedAt": "2026-11-27T21:15:15.367528+00:00",
+      "checkedAt": "2026-11-28T07:45:31.573071+00:00",
       "status": "verified",
       "annualRate": null,
       "cap": null,
@@ -94,8 +94,8 @@
       "validUntil": null,
       "rates": null,
       "note": "La TNA de la app se basa en los últimos 7 días del fondo. El escenario mensual del fondo mostrado por el comparador usa otro período; no se presenta como TNA actual de Prex.",
-      "sha256": "8bcc49e2fae8fc2a998f515d3aee48b272aa9e5dcc64261f0892eea6867eb512",
-      "fundDate": "2026-11-26",
+      "sha256": "0e007414d70b0210484da6af38ebde18c8b64c2d8e6268aa44b06a5daa287ad3",
+      "fundDate": "2026-11-27",
       "fundPeriodDays": 31,
       "fundPeriodReturn": 1.72,
       "fundAnnualRate": 0.20251612903225807,
@@ -105,7 +105,7 @@
       "id": "claro-pay",
       "url": "https://claropay.com.ar/p/claropay/faqs.html",
       "kind": "fund-method",
-      "checkedAt": "2026-11-27T21:15:15.370950+00:00",
+      "checkedAt": "2026-11-28T07:45:31.575005+00:00",
       "status": "verified",
       "annualRate": null,
       "cap": null,
@@ -114,7 +114,7 @@
       "validUntil": null,
       "rates": null,
       "note": "Claro Pay identifica SBS Ahorro Pesos. Los honorarios se deducen del fondo; no se restan dos veces. La web consultada no publica un porcentaje numérico vigente de la app. La clase debe confirmarse.",
-      "sha256": "8c88da2d682fb6aa632e23ba000d1fd26d4c8f780ccf5cdf2803818ae8c41292"
+      "sha256": "bf6e48d7fa59b2bd0bef5496ff7ed118f1cf7b844a18878a7d28622b31443655"
     }
   ]
 }
